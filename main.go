@@ -44,9 +44,26 @@ func postPatient(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, newPatient)
 }
 
+// getPatientByID locates the album whose ID value matches the id
+// parameter sent by the client, then returns that album as a response.
+func getPatientByID(c *gin.Context) {
+	id := c.Param("id")
+
+	// Loop over the list of albums, looking for
+	// an album whose ID value matches the parameter.
+	for _, a := range patients {
+		if a.ID == id {
+			c.IndentedJSON(http.StatusOK, a)
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "patient not found"})
+}
+
 func main() {
 	router := gin.Default()
 	router.GET("/patients", getPatients)
+	router.GET("/patients/:id", getPatientByID)
 	router.POST("/patients", postPatient)
 	router.Run("localhost:8080")
 
